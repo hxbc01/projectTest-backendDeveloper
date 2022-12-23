@@ -7,6 +7,8 @@ namespace App\Http\Controllers;
 use App\Models\pegawai;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -17,7 +19,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login','register']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
 
     /**
@@ -25,44 +27,32 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function register()
+    public function register(Request $request)
     {
-
-        $validator = Validator::make(request()->all(), [
-
-            'NIP' => 'required|unique',
-            'nama' => 'required',
-            'password'=> 'required',
-            'OPD' => 'required',
-            'id_status' => 'required',
-            'id_jabatan' => 'required',
-
+        $status = pegawai::create([
+            'NIP'=> $request->NIP,
+            'nama'=> $request->nama,
+            'password' => Hash::make($request->password),
+            'OPD' => $request->OPD,
+            'id_status' => $request-> id_status,
+            'id_jabatan' => $request-> id_jabatan,
         ]);
-
-        if($validator->fails()){
-            return response()->json($validator->messages());
-        }
-
-        $pegawai = pegawai ::create([
-            'NIP' => request('NIP'),
-            'nama' => request('nama'),
-            'password' => Hash::make(request('password')),
-            'OPD' => request('OPD'),
-            'id_status'=> request('id_status'),
-            'id_jabatan' => request('id_jabatan'),
-        ]);
-
-        if($pegawai) {
-            return response()->json(['success' => 'register success'], 200);
-        }else{
-            return response()->json(['error' => 'register failed'], 401);
-        }
+        $token = Auth::login($status);
+        return response()->json([
+            'data' => $status,
+            'message' => 'User created successfully',
+            'pegawai' => $status,
+            'authorisation' => [
+                'token' => $token,
+                'type' => 'bearer'
+            ]
+        ], 200);
     }
 
     public function login()
     {
         $credentials = request(['NIP', 'password']);
-        if (! $token = auth()->attempt($credentials)) {
+        if (!$token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
@@ -87,7 +77,6 @@ class AuthController extends Controller
     public function logout()
     {
         auth()->logout();
-
         return response()->json(['message' => 'Successfully logged out']);
     }
 

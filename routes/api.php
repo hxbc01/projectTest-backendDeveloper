@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Api\jabatanController;
+use App\Http\Controllers\Api\statusKepegawaianController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,3 +27,6 @@ Route::group([ 'middleware' => 'api','prefix' => 'auth'], function ($router) {
     Route::post('me', [AuthController::class,'me']);
 
 });
+
+Route::apiResource('jabatan', jabatanController::class);
+Route::apiResource('kepegawaian', statusKepegawaianController::class);
