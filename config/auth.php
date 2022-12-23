@@ -14,7 +14,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'web',
+        'guard' => 'api',
         'passwords' => 'users',
     ],
 
@@ -36,9 +36,13 @@ return [
     */
 
     'guards' => [
-        'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
+        // 'web' => [
+        //     'driver' => 'session',
+        //     'provider' => 'users',
+        // ],
+        'api' => [
+            'driver' => 'jwt',
+            'provider' => 'pegawai'
         ],
     ],
 
@@ -60,10 +64,15 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        // 'users' => [
+        //     'driver' => 'eloquent',
+        //     'model' => App\Models\User::class,
+        // ],
+
+        'pegawai' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
-        ],
+            'model' => App\Models\pegawai::class,
+        ]
 
         // 'users' => [
         //     'driver' => 'database',
