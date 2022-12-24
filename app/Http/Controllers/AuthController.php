@@ -1,13 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
-// use Illuminate\Support\Facades\Auth;
-// use Illuminate\Http\Request;
-
+use Illuminate\Http\Request;
 use App\Models\pegawai;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
@@ -30,12 +27,12 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $status = pegawai::create([
-            'NIP'=> $request->NIP,
-            'nama'=> $request->nama,
+            'NIP' => $request->NIP,
+            'nama' => $request->nama,
             'password' => Hash::make($request->password),
             'OPD' => $request->OPD,
-            'id_status' => $request-> id_status,
-            'id_jabatan' => $request-> id_jabatan,
+            'id_status' => $request->id_status,
+            'id_jabatan' => $request->id_jabatan,
         ]);
         $token = Auth::login($status);
         return response()->json([
@@ -49,14 +46,32 @@ class AuthController extends Controller
         ], 200);
     }
 
-    public function login()
+    public function login(Request $request)
     {
-        $credentials = request(['NIP', 'password']);
-        if (!$token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
+        $request->validate([
+            'NIP' => 'required',
+            'password' => 'required'
+        ]);
 
-        return $this->respondWithToken($token);
+        $credentials = $request->only('NIP', 'password');
+        $token = Auth::attempt($credentials);
+        if (!$token) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized'
+            ],401);
+        }
+        
+        $pegawai = Auth::user();
+        return response()->json([
+            'status' => 'success',
+            'pegawai' => $pegawai,
+            'authorisation' => [
+                'token' => $token,
+                'type' => 'bearer'
+            ]
+        ]);
+        
     }
 
     /**
