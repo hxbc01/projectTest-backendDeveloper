@@ -1,11 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use App\Models\pegawai;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+// use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
@@ -48,30 +50,30 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        
         $request->validate([
-            'NIP' => 'required',
-            'password' => 'required'
+            'NIP'=> 'required|string',
+            'password' => 'required',
         ]);
 
-        $credentials = $request->only('NIP', 'password');
-        $token = Auth::attempt($credentials);
+        $credentials = $request->only( 'NIP','password');
+
+        $token = JWTAuth::attempt($credentials);
         if (!$token) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Unauthorized'
-            ],401);
-        }
-        
-        $pegawai = Auth::user();
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Unauthorized'
+                ],401);
+            }
+        $user = JWTAuth::user();
         return response()->json([
             'status' => 'success',
-            'pegawai' => $pegawai,
+            'pegawai' => $user,
             'authorisation' => [
                 'token' => $token,
                 'type' => 'bearer'
             ]
         ]);
-        
     }
 
     /**
@@ -81,7 +83,10 @@ class AuthController extends Controller
      */
     public function me()
     {
-        return response()->json(auth()->user());
+        return response()->json([
+            'status' => 'success',
+            'pegawai' => Auth::user()
+        ]);
     }
 
     /**
@@ -91,8 +96,11 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        auth()->logout();
-        return response()->json(['message' => 'Successfully logged out']);
+        Auth::logout();
+        return response()->json([
+            'status' => 'success',
+            'message' => ' Successfullt logged out'
+        ]);
     }
 
     /**
@@ -102,7 +110,14 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        return $this->respondWithToken(auth()->refresh());
+        return response()->json([
+            'status' => 'success',
+            'pegawai' => Auth::user(),
+            'authorisation' => [
+                'token' => Auth::refresh(),
+                'type' => 'bearer'
+            ]
+        ]);
     }
 
     /**
@@ -116,6 +131,7 @@ class AuthController extends Controller
     {
         return response()->json([
             'access_token' => $token,
+            'refresh' => $this->respondWithToken(auth()->refresh()),
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60
         ]);

@@ -17,7 +17,8 @@ class statusKepegawaianController extends Controller
     public function index()
     {
         $status = statusKepegawaianModel::all();
-        return new PostResource(true, 'list data',$status );
+        return new PostResource(true, 'list status pegawai',$status );
+        
     }
 
     /**
@@ -40,9 +41,10 @@ class statusKepegawaianController extends Controller
     {
         $status = statusKepegawaianModel::create($request->all());
         return response()->json([
-            'data' => $status,
-            'message'=>'data success post'
-        ],200);
+            'status' => 'success',
+            'message' => 'status kepegawaian created successfully',
+            'data' => $status
+         ],200);
     }
 
     /**
@@ -54,8 +56,10 @@ class statusKepegawaianController extends Controller
     public function show(statusKepegawaianModel $statusKepegawaianModel)
     {
         return response()->json([
-            'status_kepegawaian'=>$statusKepegawaianModel
-        ]);
+            'status' => 'success',
+            'message' => 'status kepegawaian created successfully',
+            'status_kepegawaian' => $statusKepegawaianModel
+         ],200);
     }
 
     /**
@@ -91,8 +95,9 @@ class statusKepegawaianController extends Controller
     {
         $statusKepegawaianModel->delete();
         return response()->json([
-            'data' => 'empty',
-            'message' => 'data berhasil di hapus!',
-        ], 200);
+            'status' => 'success',
+            'message' => 'status kepegawaian created successfully',
+            'data' => $statusKepegawaianModel
+         ],200);
     }
 }

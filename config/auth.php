@@ -70,7 +70,8 @@ return [
         // ],
 
         'pegawai' => [
-            'driver' => 'eloquent',
+            'driver' => 'database',
+            'table' => 'pegawai',
             'model' => App\Models\pegawai::class,
         ]
 

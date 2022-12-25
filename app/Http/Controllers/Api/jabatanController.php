@@ -17,7 +17,7 @@ class jabatanController extends Controller
     public function index()
     {
         $jabatan = jabatanModel::all();
-        return new PostResource(true, 'list data',$jabatan );
+        return new PostResource(true, 'list jabatan',$jabatan );
     }
 
     /**
@@ -41,8 +41,9 @@ class jabatanController extends Controller
         $jabatan = jabatanModel::create($request->all());
 
         return response()->json([
-            'data' => $jabatan,
-            'message'=>'data success post'
+           'status' => 'success',
+           'message' => 'jabatan created successfully',
+           'data' => $jabatan
         ],200);
     }
 
@@ -55,8 +56,10 @@ class jabatanController extends Controller
     public function show(jabatanModel $jabatan)
     {
         return response()->json([
-            'jabatan'=>$jabatan
-        ]);
+            'status' => 'true',
+            'message' => 'Data found',
+            'data' => $jabatan
+         ],200);
     }
 
     /**
@@ -92,8 +95,9 @@ class jabatanController extends Controller
     {
         $jabatan->delete();
         return response()->json([
-            'data' => 'empty',
-            'message' => 'data berhasil di hapus!',
-        ], 200);
+            'status' => 'success',
+            'message' => 'jabatan deleted successfully',
+            'data' => $jabatan
+         ],200);
     }
 }
