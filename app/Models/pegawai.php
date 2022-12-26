@@ -14,7 +14,7 @@ class pegawai extends Authenticatable implements JWTSubject
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $table = 'pegawai';
-
+    protected $primarykey = 'NIP';
     protected $fillable =[
         'NIP',
         'nama',

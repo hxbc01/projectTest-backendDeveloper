@@ -9,6 +9,7 @@ class statusKepegawaianModel extends Model
 {
     use HasFactory;
     protected $table = 'status_kepegawaian';
+    protected $primarykey = 'id_status';
     protected $fillable = [
         'id_status',
         'status_pegawai',
